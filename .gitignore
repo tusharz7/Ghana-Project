@@ -1,0 +1,17 @@
+# Environment and system files
+.venv/
+__pycache__/
+*.pyc
+.DS_Store
+
+# Data stays local: fisher GPS tracks, model outputs and raw exports
+*.csv
+*.rds
+*.xlsx
+*.nc
+*.data
+*.bin
+*.meta
+*.out
+Exported Files/
+fisherDepth/

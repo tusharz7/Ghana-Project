@@ -1,0 +1,18 @@
+Warning message:
+package 'momentuHMM' was built under R version 4.4.3 
+Starting from saved estimates
+=======================================================================
+Fitting HMM with 3 states and 2 data streams
+-----------------------------------------------------------------------
+
+ step ~ gamma(mean=~1, sd=~1)
+ angle ~ vm(concentration=~1)
+
+ Transition probability matrix formula: ~1
+
+ Initial distribution formula: ~1
+=======================================================================
+Error in nlm(nLogLike, optPar, nbStates, newformula, p$bounds, p$parSize,  : 
+  non-finite value supplied by 'nlm'
+Calls: fitHMM -> fitHMM.momentuHMMData
+Execution halted

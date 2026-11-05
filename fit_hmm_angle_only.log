@@ -1,0 +1,79 @@
+Warning message:
+package 'momentuHMM' was built under R version 4.4.3 
+Segments kept: 1276 of 1589 (>= 20 steps)
+Replaced 66 zero-length steps with 0.001 km
+Steps: 132158, segments: 1276
+Start 1 of 3
+=======================================================================
+Fitting HMM with 3 states and 1 data stream
+-----------------------------------------------------------------------
+
+ angle ~ vm(concentration=~1)
+
+ Transition probability matrix formula: ~1
+
+ Initial distribution formula: ~1
+=======================================================================
+DONE
+  log-likelihood 22862.2, valid: TRUE
+Start 2 of 3
+=======================================================================
+Fitting HMM with 3 states and 1 data stream
+-----------------------------------------------------------------------
+
+ angle ~ vm(concentration=~1)
+
+ Transition probability matrix formula: ~1
+
+ Initial distribution formula: ~1
+=======================================================================
+DONE
+  log-likelihood 22862.2, valid: TRUE
+Start 3 of 3
+=======================================================================
+Fitting HMM with 3 states and 1 data stream
+-----------------------------------------------------------------------
+
+ angle ~ vm(concentration=~1)
+
+ Transition probability matrix formula: ~1
+
+ Initial distribution formula: ~1
+=======================================================================
+DONE
+  log-likelihood 22862.2, valid: TRUE
+Valid fits: 3 of 3; best log-likelihood 22862.2
+Saved /Users/tushy/Documents/Research/Ghana Project/hmm_fit_angle_only.rds 
+Optimiser code: 1 (1 or 2 means converged)
+Log-likelihood: 22862.17 
+$Par
+$Par$angle
+[1]   1.026338  32.466186 438.379242
+
+
+$beta
+          [,1]     [,2]      [,3]      [,4]      [,5]      [,6]
+[1,] -1.678667 -4.12947 -2.087521 -2.107023 -4.663673 -2.453919
+
+$delta
+[1] 0.1464144 0.4532231 0.4003625
+
+Transition matrix:
+        state 1 state 2 state 3
+state 1  0.8315  0.1552  0.0134
+state 2  0.0995  0.8028  0.0976
+state 3  0.0086  0.0785  0.9129
+State turning concentration: 1.026, 32.466, 438.379
+Fishing state: 1
+Saved /Users/tushy/Documents/Research/Ghana Project/hmm_states_angle_only.csv 
+  pi_min fishing_points fishing_share fishing_hours fishing_runs
+1    0.5          28663    0.21481032     2388.5833         4371
+2    0.6          27037    0.20262452     2253.0833         4634
+3    0.7          25515    0.19121813     2126.2500         4839
+4    0.8          23786    0.17826041     1982.1667         5057
+5    0.9          20584    0.15426353     1715.3333         6398
+6    1.0           5845    0.04380443      487.0833         4031
+Saved /Users/tushy/Documents/Research/Ghana Project/hmm_pimin_sweep_angle_only.csv 
+Saved /Users/tushy/Documents/Research/Ghana Project/hmm_pimin_sweep.png 
+Saved /Users/tushy/Documents/Research/Ghana Project/hmm_pimin_sweep_interp.png 
+fit exit=0

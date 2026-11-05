@@ -1,0 +1,6 @@
+Comparison extent: lon -3.5 to 1.5, lat 4.0 to 6.5
+Model contour sample points: 672
+Median model-to-Natural-Earth distance: 0.628 km
+90th percentile distance: 1.687 km
+95th percentile distance: 2.650 km
+Maximum distance: 5.541 km
