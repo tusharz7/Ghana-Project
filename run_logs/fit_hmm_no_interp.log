@@ -1,0 +1,87 @@
+Warning message:
+package 'momentuHMM' was built under R version 4.4.3 
+Segments kept: 1276 of 1589 (>= 20 steps)
+Grid slots: 133434, with a raw ping: 111446 (83.5%), raw pings: 111773 (327 shared a slot and were dropped)
+Replaced 1291 zero-length steps with 0.001 km
+Steps: 98629, segments: 1276
+Base step quantiles (km per 5 min): 0.087 0.241 0.862 
+Start 1 of 3
+=======================================================================
+Fitting HMM with 3 states and 2 data streams
+-----------------------------------------------------------------------
+
+ step ~ gamma(mean=~1, sd=~1)
+ angle ~ vm(concentration=~1)
+
+ Transition probability matrix formula: ~1
+
+ Initial distribution formula: ~1
+=======================================================================
+DONE
+  log-likelihood 65337.7, valid: TRUE
+Start 2 of 3
+=======================================================================
+Fitting HMM with 3 states and 2 data streams
+-----------------------------------------------------------------------
+
+ step ~ gamma(mean=~1, sd=~1)
+ angle ~ vm(concentration=~1)
+
+ Transition probability matrix formula: ~1
+
+ Initial distribution formula: ~1
+=======================================================================
+DONE
+  log-likelihood 65337.7, valid: TRUE
+Start 3 of 3
+=======================================================================
+Fitting HMM with 3 states and 2 data streams
+-----------------------------------------------------------------------
+
+ step ~ gamma(mean=~1, sd=~1)
+ angle ~ vm(concentration=~1)
+
+ Transition probability matrix formula: ~1
+
+ Initial distribution formula: ~1
+=======================================================================
+DONE
+  log-likelihood 65337.7, valid: TRUE
+Valid fits: 3 of 3; best log-likelihood 65337.7
+Saved /Users/tushy/Documents/Research/Ghana Project/pipeline_outputs/hmm_results/hmm_fit_no_interp.rds 
+Optimiser code: 1 (1 or 2 means converged)
+Log-likelihood: 65337.72 
+$Par
+$Par$step
+[1] 0.1956219 0.1564279 0.7751551 0.2314053 0.0822232 0.1505657
+
+$Par$angle
+[1]   1.459331  89.500014 100.734632
+
+
+$beta
+          [,1]      [,2]      [,3]    [,4]     [,5]      [,6]
+[1,] -2.685249 -3.429251 -2.715528 -21.925 -3.52672 -23.46847
+
+$delta
+[1] 0.3035523 0.3167754 0.3796724
+
+Transition matrix:
+        state 1 state 2 state 3
+state 1  0.9086  0.0620  0.0294
+state 2  0.0621  0.9379  0.0000
+state 3  0.0286  0.0000  0.9714
+State mean step (km): 0.196, 0.156, 0.775
+State turning concentration: 1.459, 89.5, 100.735
+Saved /Users/tushy/Documents/Research/Ghana Project/pipeline_outputs/hmm_results/hmm_states_no_interp.csv 
+  pi_min fishing_points fishing_share fishing_hours fishing_runs
+1    0.5          43035    0.32251900     3586.2500         3686
+2    0.6          40696    0.30498973     3391.3333         3722
+3    0.7          38062    0.28524964     3171.8333         3814
+4    0.8          35356    0.26496995     2946.3333         3960
+5    0.9          31767    0.23807276     2647.2500         4256
+6    1.0           7814    0.05856079      651.1667         4947
+Saved /Users/tushy/Documents/Research/Ghana Project/pipeline_outputs/hmm_results/hmm_pimin_sweep_no_interp.csv 
+Saved /Users/tushy/Documents/Research/Ghana Project/result_figures/hmm_pimin_sweep.png 
+Saved /Users/tushy/Documents/Research/Ghana Project/result_figures/hmm_pimin_sweep_interp.png 
+fit exit=0

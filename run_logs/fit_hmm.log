@@ -1,0 +1,46 @@
+Warning message:
+package 'momentuHMM' was built under R version 4.4.3 
+Segments kept: 1276 of 1589 (>= 20 steps)
+Replaced 66 zero-length steps with 0.001 km
+Steps: 132158, segments: 1276
+Base step quantiles (km per 5 min): 0.088 0.238 0.857 
+Start 1 of 10
+=======================================================================
+Fitting HMM with 3 states and 2 data streams
+-----------------------------------------------------------------------
+
+ step ~ gamma(mean=~1, sd=~1)
+ angle ~ vm(concentration=~1)
+
+ Transition probability matrix formula: ~1
+
+ Initial distribution formula: ~1
+=======================================================================
+DONE
+  log-likelihood 105260.7, valid: TRUE
+Start 2 of 10
+=======================================================================
+Fitting HMM with 3 states and 2 data streams
+-----------------------------------------------------------------------
+
+ step ~ gamma(mean=~1, sd=~1)
+ angle ~ vm(concentration=~1)
+
+ Transition probability matrix formula: ~1
+
+ Initial distribution formula: ~1
+=======================================================================
+DONE
+  log-likelihood 105260.7, valid: TRUE
+Start 3 of 10
+=======================================================================
+Fitting HMM with 3 states and 2 data streams
+-----------------------------------------------------------------------
+
+ step ~ gamma(mean=~1, sd=~1)
+ angle ~ vm(concentration=~1)
+
+ Transition probability matrix formula: ~1
+
+ Initial distribution formula: ~1
+=======================================================================

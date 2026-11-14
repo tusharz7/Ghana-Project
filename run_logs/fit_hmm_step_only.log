@@ -1,0 +1,79 @@
+Warning message:
+package 'momentuHMM' was built under R version 4.4.3 
+Segments kept: 1276 of 1589 (>= 20 steps)
+Replaced 66 zero-length steps with 0.001 km
+Steps: 132158, segments: 1276
+Base step quantiles (km per 5 min): 0.088 0.238 0.857 
+Start 1 of 3
+=======================================================================
+Fitting HMM with 3 states and 1 data stream
+-----------------------------------------------------------------------
+
+ step ~ gamma(mean=~1, sd=~1)
+
+ Transition probability matrix formula: ~1
+
+ Initial distribution formula: ~1
+=======================================================================
+DONE
+  log-likelihood 114532.2, valid: TRUE
+Start 2 of 3
+=======================================================================
+Fitting HMM with 3 states and 1 data stream
+-----------------------------------------------------------------------
+
+ step ~ gamma(mean=~1, sd=~1)
+
+ Transition probability matrix formula: ~1
+
+ Initial distribution formula: ~1
+=======================================================================
+DONE
+  log-likelihood 114532.2, valid: TRUE
+Start 3 of 3
+=======================================================================
+Fitting HMM with 3 states and 1 data stream
+-----------------------------------------------------------------------
+
+ step ~ gamma(mean=~1, sd=~1)
+
+ Transition probability matrix formula: ~1
+
+ Initial distribution formula: ~1
+=======================================================================
+DONE
+  log-likelihood 114532.2, valid: TRUE
+Valid fits: 3 of 3; best log-likelihood 114532.2
+Saved /Users/tushy/Documents/Research/Ghana Project/pipeline_outputs/hmm_results/hmm_fit_step_only.rds 
+Optimiser code: 1 (1 or 2 means converged)
+Log-likelihood: 114532.2 
+$Par
+$Par$step
+[1] 0.20035569 0.04773368 0.77158732 0.09486828 0.04924527 0.16474246
+
+
+$beta
+          [,1]      [,2]      [,3]      [,4]      [,5]      [,6]
+[1,] -4.809399 -3.864958 -4.135159 -5.642957 -3.668208 -6.327682
+
+$delta
+[1] 0.3971261 0.1995710 0.4033030
+
+Transition matrix:
+        state 1 state 2 state 3
+state 1  0.9717  0.0079  0.0204
+state 2  0.0157  0.9808  0.0035
+state 3  0.0248  0.0017  0.9734
+State mean step (km): 0.2, 0.048, 0.772
+Saved /Users/tushy/Documents/Research/Ghana Project/pipeline_outputs/hmm_results/hmm_states_step_only.csv 
+  pi_min fishing_points fishing_share fishing_hours fishing_runs
+1    0.5          57160     0.4283766      4763.333         2094
+2    0.6          56572     0.4239699      4714.333         2074
+3    0.7          55978     0.4195183      4664.833         2058
+4    0.8          55179     0.4135303      4598.250         2038
+5    0.9          54003     0.4047169      4500.250         2038
+6    1.0              0     0.0000000         0.000            0
+Saved /Users/tushy/Documents/Research/Ghana Project/pipeline_outputs/hmm_results/hmm_pimin_sweep_step_only.csv 
+Saved /Users/tushy/Documents/Research/Ghana Project/result_figures/hmm_pimin_sweep.png 
+Saved /Users/tushy/Documents/Research/Ghana Project/result_figures/hmm_pimin_sweep_interp.png 
+fit exit=0
