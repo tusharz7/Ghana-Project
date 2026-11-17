@@ -1,0 +1,6 @@
+Saved /Users/tushy/Documents/Research/Ghana Project/pipeline_outputs/gps_tracks/trip_tracks.csv
+Rows: 122,618   tracks (trip segments): 2942   boats: 25
+GPS spike pings dropped (> 30 km/h out and back): 100
+Steps inside segments still faster than 30 km/h (kept, not spikes): 52
+Tracks not returned to Tema (kept, flagged): 1166
+Trips: 228   ended by a gap over 4 days: 31

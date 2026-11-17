@@ -1,4 +1,4 @@
-"""Build one track per boat-trip for crawlWrap, using the same trip split as the metadata.
+"""Build one track per boat-trip for the interpolation, using the same trip split as the metadata.
 
 Trips are defined exactly as in fisherMetadata (per trip)/generate_fisher_metadata.py:
 a trip is a run of pings outside the 1 km Tema-port radius, split again wherever pings are
@@ -31,9 +31,10 @@ MAX_TRIP_GAP_DAYS = 4  # observed gaps longer than this end the trip; the next p
 
 GEOD = Geod(ellps="WGS84")
 TO_UTM31N = Transformer.from_crs("EPSG:4326", "EPSG:32631", always_xy=True)
-TO_WGS84 = Transformer.from_crs("EPSG:32631", "EPSG:4326", always_xy=True)
-MAX_SPEED_KMH = 30  # steps faster than this are implausible GPS jumps
-CAP_SPEED_KMH = 20  # ...and are pulled back to this speed along the same bearing
+MAX_SPEED_KMH = 30     # a step faster than this that comes back within a few pings is a GPS spike
+MAX_SPIKE_PINGS = 3    # longest run of bad pings removed as one spike
+MIN_PING_SECONDS = 60  # pings closer than this with a fast step between are near-duplicates
+MIN_DETOUR_RATIO = 2   # a spike's path out and back is at least this many times the direct distance
 
 
 # ─────────────────────────────────────────────
@@ -98,12 +99,15 @@ def split_at_long_gaps(
 # ─────────────────────────────────────────────
 
 def build_tracks() -> pd.DataFrame:
-    pieces = []
+    pieces, n_spikes = [], 0
     for path in sorted(FISHER_DEPTH_FOLDER.glob("*_depth.csv")):
         points = pd.read_csv(path, parse_dates=["timestamp"]).dropna(
             subset=["timestamp", "lat", "lon"]
         )
         points = points.sort_values("timestamp").reset_index(drop=True)
+        n_before = len(points)
+        points = drop_speed_spikes(points)
+        n_spikes += n_before - len(points)
         boat_id = path.name.replace("_depth.csv", "")
         in_port = distance_from_port_km(
             points["lat"].to_numpy(), points["lon"].to_numpy()
@@ -112,7 +116,7 @@ def build_tracks() -> pd.DataFrame:
         trips = split_at_long_gaps(points["timestamp"].to_numpy(), detect_tema_trips(in_port))
         for number, (start, end, returned, end_reason) in enumerate(trips, start=1):
             trip = points.iloc[start:end + 1].copy()
-            # Split long observed gaps inside a trip so crawlWrap never interpolates across them
+            # Split long observed gaps inside a trip so the interpolation never bridges them
             gap_min = trip["timestamp"].diff().dt.total_seconds().fillna(0) / 60
             trip["segment"] = (gap_min > MAX_GAP_MINUTES).cumsum() + 1
             trip["boat_id"] = boat_id
@@ -126,51 +130,81 @@ def build_tracks() -> pd.DataFrame:
     x, y = TO_UTM31N.transform(tracks["lon"].to_numpy(), tracks["lat"].to_numpy())
     tracks["x"] = x
     tracks["y"] = y
-    tracks = cap_implausible_speeds(tracks)
-    return tracks[[
+    tracks = tracks[[
         "track_id", "boat_id", "trip_index", "segment", "returned_to_tema",
-        "trip_end_reason", "timestamp", "lat", "lon", "x", "y", "speed", "depth_m", "on_land", "speed_capped",
-    ]]
-
-
-def cap_implausible_speeds(tracks: pd.DataFrame) -> pd.DataFrame:
-    """Pull back any step faster than MAX_SPEED_KMH to CAP_SPEED_KMH along the same bearing.
-
-    Works in metres (UTM 31N) within each track, in time order. Each step starts from the
-    previous point after it has been capped, so one bad ping cannot shift the rest of the track.
-    """
-    tracks = tracks.sort_values(["track_id", "timestamp"]).reset_index(drop=True)
-    x = tracks["x"].to_numpy().copy()
-    y = tracks["y"].to_numpy().copy()
-    times = tracks["timestamp"].to_numpy()
-    capped = np.zeros(len(tracks), dtype=bool)
-
-    for _, idx in tracks.groupby("track_id").indices.items():
-        for k in range(1, len(idx)):
-            i, p = idx[k], idx[k - 1]
-            dt_h = (times[i] - times[p]) / np.timedelta64(1, "h")
-            dx, dy = x[i] - x[p], y[i] - y[p]
-            dist_km = np.hypot(dx, dy) / 1000
-            if dt_h <= 0:
-                speed_kmh = np.inf if dist_km > 0 else 0.0
-            else:
-                speed_kmh = dist_km / dt_h
-            if speed_kmh > MAX_SPEED_KMH:
-                allowed_km = CAP_SPEED_KMH * max(dt_h, 0.0)
-                scale = allowed_km / dist_km if dist_km > 0 else 0.0
-                x[i] = x[p] + dx * scale
-                y[i] = y[p] + dy * scale
-                capped[i] = True
-
-    tracks["x"] = x
-    tracks["y"] = y
-    tracks["speed_capped"] = capped
-    # Positions changed only where capped, so convert just those back to lat/lon
-    if capped.any():
-        lon, lat = TO_WGS84.transform(x[capped], y[capped])
-        tracks.loc[capped, "lon"] = lon
-        tracks.loc[capped, "lat"] = lat
+        "trip_end_reason", "timestamp", "lat", "lon", "x", "y", "speed", "depth_m", "on_land",
+    ]].copy()
+    tracks.attrs["spikes_dropped"] = n_spikes
     return tracks
+
+
+def step_speeds_kmh(lat: np.ndarray, lon: np.ndarray, times: np.ndarray) -> np.ndarray:
+    """Geodesic speed (km/h) of each step between consecutive pings; inf for a jump in zero time."""
+    _, _, dist_m = GEOD.inv(lon[:-1], lat[:-1], lon[1:], lat[1:])
+    hours = np.diff(times) / np.timedelta64(1, "h")
+    with np.errstate(divide="ignore", invalid="ignore"):
+        speed = np.where(hours > 0, np.asarray(dist_m) / 1000 / hours, np.where(np.asarray(dist_m) > 0, np.inf, 0.0))
+    return speed
+
+
+def drop_speed_spikes(points: pd.DataFrame) -> pd.DataFrame:
+    """Remove short GPS excursions from one boat's time-sorted pings; no ping is moved.
+
+    After a step faster than MAX_SPEED_KMH, look up to MAX_SPIKE_PINGS pings ahead for the first
+    ping the boat could have reached directly from the last good ping (at most MAX_SPEED_KMH, or
+    at most half the speed of the jump) AND that the pings in between detour to (path at least
+    MIN_DETOUR_RATIO times the direct distance) AND that is reached by a fast step too. Those
+    pings are a jump out and back and are removed. A boat that is really fast for a while goes nearly straight, so it is kept.
+    Two pings under MIN_PING_SECONDS apart with a fast step between are near-duplicates: the one
+    farther from the next ping is removed. A fast first or last step drops the end ping when the
+    step inward is normal. Repeats until nothing changes, since a removal changes the neighbours.
+    """
+    keep = np.ones(len(points), dtype=bool)
+    lat_all, lon_all = points["lat"].to_numpy(float), points["lon"].to_numpy(float)
+    times_all = points["timestamp"].to_numpy()
+
+    def dist_km(i: int, j: int) -> float:
+        return GEOD.inv(lon_all[i], lat_all[i], lon_all[j], lat_all[j])[2] / 1000
+
+    def speed_kmh(i: int, j: int) -> float:
+        d = dist_km(i, j)
+        h = (times_all[j] - times_all[i]) / np.timedelta64(1, "h")
+        return d / h if h > 0 else (np.inf if d > 0 else 0.0)
+
+    while True:
+        idx = np.flatnonzero(keep)
+        if len(idx) < 3:
+            break
+        v = step_speeds_kmh(lat_all[idx], lon_all[idx], times_all[idx])   # v[k]: ping k to k+1
+        secs = np.diff(times_all[idx]) / np.timedelta64(1, "s")
+        drop: set[int] = set()
+        next_k = 0                                                 # never search from a ping being dropped
+        for k in np.flatnonzero(v > MAX_SPEED_KMH):
+            if k < next_k or idx[k] in drop:
+                continue
+            if secs[k] < MIN_PING_SECONDS and k + 2 < len(idx):
+                # near-duplicate pair: drop whichever is farther from the ping after them
+                a_far = speed_kmh(idx[k], idx[k + 2]) > speed_kmh(idx[k + 1], idx[k + 2])
+                drop.add(idx[k] if a_far else idx[k + 1])
+                continue
+            if k == 0 and not v[1] > MAX_SPEED_KMH:
+                drop.add(idx[0])                                   # bad first ping
+                continue
+            limit = max(MAX_SPEED_KMH, 0.5 * v[k])
+            for j in range(k + 2, min(k + 2 + MAX_SPIKE_PINGS, len(idx))):
+                path = sum(dist_km(idx[m], idx[m + 1]) for m in range(k, j))
+                if (v[j - 1] > MAX_SPEED_KMH and speed_kmh(idx[k], idx[j]) <= limit
+                        and path >= MIN_DETOUR_RATIO * dist_km(idx[k], idx[j])):
+                    drop.update(idx[k + 1:j])                      # out and back: drop the pings between
+                    next_k = j
+                    break
+            else:
+                if k == len(idx) - 2 and not v[k - 1] > MAX_SPEED_KMH:
+                    drop.add(idx[-1])                              # bad last ping
+        if not drop:
+            break
+        keep[list(drop)] = False
+    return points[keep].reset_index(drop=True)
 
 
 def main() -> None:
@@ -180,7 +214,11 @@ def main() -> None:
     n_open = tracks.drop_duplicates("track_id")["returned_to_tema"].eq(False).sum()
     print(f"Saved {OUTPUT_CSV}")
     print(f"Rows: {len(tracks):,}   tracks (trip segments): {n_tracks}   boats: {tracks['boat_id'].nunique()}")
-    print(f"Pings capped to {CAP_SPEED_KMH} km/h (was > {MAX_SPEED_KMH} km/h): {int(tracks['speed_capped'].sum())}")
+    print(f"GPS spike pings dropped (> {MAX_SPEED_KMH} km/h out and back): {tracks.attrs['spikes_dropped']}")
+    fast = [step_speeds_kmh(t.lat.to_numpy(), t.lon.to_numpy(), t.timestamp.to_numpy()) > MAX_SPEED_KMH
+            for _, t in tracks.groupby("track_id") if len(t) > 1]
+    print(f"Steps inside segments still faster than {MAX_SPEED_KMH} km/h (kept, not spikes): "
+          f"{int(sum(f.sum() for f in fast))}")
     print(f"Tracks not returned to Tema (kept, flagged): {n_open}")
     trips = tracks.drop_duplicates(["boat_id", "trip_index"])
     print(f"Trips: {len(trips)}   ended by a gap over {MAX_TRIP_GAP_DAYS} days: "

@@ -13,7 +13,7 @@
 
 project_root <- normalizePath(".")      # run from the project folder: Rscript pipeline_scripts/<name>.R
 
-PIMIN_VALUES <- seq(0.5, 1.0, by = 0.1)
+PIMIN_VALUES <- seq(0.5, 0.9, by = 0.1)
 STATE_COLORS <- c("#2a78d6", "#eb6834", "#1baf7a")   # colorblind-checked categorical order
 STATE_PCH    <- c(19, 17, 15)                         # circle, triangle, square
 KM_STEP_TO_KNOTS <- 12 / 1.852                        # 12 steps per hour, 1.852 km per nautical mile

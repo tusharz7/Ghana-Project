@@ -1,0 +1,19 @@
+Warning message:
+package 'momentuHMM' was built under R version 4.4.3 
+Fishing state: 1 (mean step 0.189 km)
+Saved /Users/tushy/Documents/Research/Ghana Project/pipeline_outputs/hmm_results/hmm_states_events.csv 
+    label pi_min raw_points raw_runs gap_fixes_filled short_fixes_dropped
+1 viterbi     NA      40001     4423                0                 534
+2  pi_min    0.5      39913     4720              107                 580
+3  pi_min    0.6      38812     4813               87                 628
+4  pi_min    0.7      37602     4943              124                 698
+5  pi_min    0.8      36257     5144              209                 769
+6  pi_min    0.9      33554     5942              861                 960
+  event_points event_share event_hours n_events mean_event_minutes
+1        39467      0.2958        3289     3889              50.74
+2        39440      0.2956        3287     4033              48.90
+3        38271      0.2868        3189     4098              46.69
+4        37028      0.2775        3086     4121              44.93
+5        35697      0.2675        2975     4166              42.84
+6        33455      0.2507        2788     4121              40.59
+Saved /Users/tushy/Documents/Research/Ghana Project/pipeline_outputs/hmm_results/hmm_events_sweep.csv 

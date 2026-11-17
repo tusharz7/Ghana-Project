@@ -1,0 +1,38 @@
+Warning message:
+package 'crawl' was built under R version 4.4.3 
+Segments: 2942 total, 1628 with >= 10 points, 1314 too short (skipped)
+Skipping 38 near-stationary segment(s): OMI_Fisher_003_WaLoBi_t12_s4, OMI_Fisher_008_Malachie3_t2_s10, OMI_Fisher_013_John316_t10_s3, OMI_Fisher_019_Emmanuel_t1_s103, OMI_Fisher_019_Emmanuel_t1_s12, OMI_Fisher_019_Emmanuel_t1_s122, OMI_Fisher_019_Emmanuel_t1_s133, OMI_Fisher_019_Emmanuel_t1_s138, OMI_Fisher_019_Emmanuel_t1_s144, OMI_Fisher_019_Emmanuel_t1_s146, OMI_Fisher_019_Emmanuel_t1_s15, OMI_Fisher_019_Emmanuel_t1_s151, OMI_Fisher_019_Emmanuel_t1_s16, OMI_Fisher_019_Emmanuel_t1_s160, OMI_Fisher_019_Emmanuel_t1_s161, OMI_Fisher_019_Emmanuel_t1_s163, OMI_Fisher_019_Emmanuel_t1_s164, OMI_Fisher_019_Emmanuel_t1_s167, OMI_Fisher_019_Emmanuel_t1_s168, OMI_Fisher_019_Emmanuel_t1_s17, OMI_Fisher_019_Emmanuel_t1_s172, OMI_Fisher_019_Emmanuel_t1_s18, OMI_Fisher_019_Emmanuel_t1_s24, OMI_Fisher_019_Emmanuel_t1_s26, OMI_Fisher_019_Emmanuel_t1_s32, OMI_Fisher_019_Emmanuel_t1_s34, OMI_Fisher_019_Emmanuel_t1_s39, OMI_Fisher_019_Emmanuel_t1_s45, OMI_Fisher_019_Emmanuel_t1_s46, OMI_Fisher_019_Emmanuel_t1_s54, OMI_Fisher_019_Emmanuel_t1_s59, OMI_Fisher_019_Emmanuel_t1_s61, OMI_Fisher_019_Emmanuel_t1_s79, OMI_Fisher_019_Emmanuel_t1_s85, OMI_Fisher_019_Emmanuel_t1_s88, OMI_Fisher_019_Emmanuel_t1_s97, OMI_Fisher_023_YehowaDzi_t7_s10, OMI_Fisher_023_YehowaDzi_t7_s9
+Pass 0: fitting 1590 segment(s)
+  100/1590 done
+  200/1590 done
+  300/1590 done
+  400/1590 done
+  500/1590 done
+  600/1590 done
+  700/1590 done
+  800/1590 done
+  900/1590 done
+  1000/1590 done
+  1100/1590 done
+  1200/1590 done
+  1300/1590 done
+  1400/1590 done
+  1500/1590 done
+
+warning: solve(): system is singular (rcond: 1.7629e-19); attempting approx solution
+
+warning: solve(): system is singular (rcond: 1.09071e-27); attempting approx solution
+
+warning: solve(): system is singular (rcond: 6.10292e-34); attempting approx solution
+
+warning: solve(): system is singular (rcond: 1.10124e-17); attempting approx solution
+  1590/1590 done
+Pass 1: fitting 57 segment(s)
+  57/57 done
+Pass 2: fitting 5 segment(s)
+  5/5 done
+There were 17 warnings (use warnings() to see them)
+Saved /Users/tushy/Documents/Research/Ghana Project/pipeline_outputs/gps_tracks/regularised_tracks.csv 
+Rows: 138410  Segments fitted: 1590  Stationary skipped: 38  Failed after retries: 0 
+Segments where every step is 5 min: 1590 of 1590 
+interpolation exit=0

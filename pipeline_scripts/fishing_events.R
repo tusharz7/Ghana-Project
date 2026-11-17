@@ -26,7 +26,7 @@ sweep_csv    <- file.path(project_root, "pipeline_outputs/hmm_results/hmm_events
 
 MIN_EVENT_FIXES <- 2                        # at least 2 consecutive fishing fixes per event
 MAX_GAP_FIXES   <- 1                        # fill non-fishing gaps of this many fixes or fewer
-PIMIN_VALUES    <- seq(0.5, 1.0, by = 0.1)
+PIMIN_VALUES    <- seq(0.5, 0.9, by = 0.1)
 STEP_MINUTES    <- 5
 
 # ─────────────────────────────────────────────

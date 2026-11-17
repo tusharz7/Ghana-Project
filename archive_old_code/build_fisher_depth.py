@@ -14,22 +14,16 @@ def loadDepthGrid(cross_ref_folder: Path):
 
     Files:
       XC.data  — longitude for each grid cell  (385 x 1376, float32 big-endian)
+      YC.data  — latitude for each grid cell   (385 x 1376, float32 big-endian)
       Depth.data — seafloor depth in metres     (385 x 1376, float32 big-endian)
-
-    Latitude is reconstructed from the grid spacing (0.015625 deg/cell)
-    anchored at the known Ghana coastline row.
     """
     xc    = np.fromfile(cross_ref_folder / "XC.data",    dtype=">f4").reshape(385, 1376)
+    yc    = np.fromfile(cross_ref_folder / "YC.data",    dtype=">f4").reshape(385, 1376)
     depth = np.fromfile(cross_ref_folder / "Depth.data", dtype=">f4").reshape(385, 1376)
 
-    # Longitude: uniform per row, taken from first row of XC
+    # The grid is regular: longitude is the same down each column, latitude the same along each row
     lons = xc[0]
-
-    # Latitude: reconstruct from grid spacing
-    # Grid step = 0.015625 deg; land (depth=0) starts at row ~239 which ~ 5.0N (Ghana coast)
-    lat_step  = 0.015625
-    lat_start = 5.0 - 239 * lat_step   # ~1.266 N
-    lats      = lat_start + np.arange(385) * lat_step
+    lats = yc[:, 0]   # 1.008 N to 7.008 N; an older version rebuilt these and was 0.258 deg (~29 km) too far north
 
     print(f"Depth grid loaded: {depth.shape} cells")
     print(f"  Lat range : {lats.min():.3f}N  to  {lats.max():.3f}N")
@@ -77,6 +71,7 @@ def loadFisherFile(file_path: Path, file_id: int) -> Optional[pd.DataFrame]:
         df = df.dropna(subset=["lat", "lon"])
 
         if len(df) < 100: # need at least 100 rows
+            print(f"  Skipped {file_path.name}: only {len(df)} rows with a position (need 100)")
             return None
 
         df["speed"]     = pd.to_numeric(df["speed"],   errors="coerce").fillna(0)
@@ -87,6 +82,7 @@ def loadFisherFile(file_path: Path, file_id: int) -> Optional[pd.DataFrame]:
         return df[["file_id", "file_name", "timestamp", "lat", "lon", "speed", "heading"]]
 
     except Exception as e:
+        print(f"  Skipped {file_path.name}: {type(e).__name__}: {e}")
         return None
 
 
@@ -96,7 +92,7 @@ def loadFisherFile(file_path: Path, file_id: int) -> Optional[pd.DataFrame]:
 
 def main():
     fisher_folder    = Path("/Users/tushy/Documents/Research/Ghana Project/Exported Files")
-    cross_ref_folder = Path("/Users/tushy/Documents/Research/Ghana Project/cross_reference")
+    cross_ref_folder = Path("/Users/tushy/Documents/Research/Ghana Project/data")   # XC/YC/Depth.data
     output_folder    = Path("/Users/tushy/Documents/Research/Ghana Project/fisherDepth")
     output_folder.mkdir(parents=True, exist_ok=True)
 

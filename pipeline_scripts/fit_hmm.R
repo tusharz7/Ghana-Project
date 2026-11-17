@@ -1,12 +1,12 @@
 # Fit a 3-state momentuHMM model to the regularised boat-trip tracks.
 #
-# Input:  regularised_tracks.csv (from crawl_tracks.R), 5-minute positions in UTM 31N metres
-# Output: hmm_fit.rds, hmm_states.csv, hmm_pimin_sweep.csv, hmm_pimin_sweep.png
+# Input:  regularised_tracks.csv (from interpolation_script.R), 5-minute positions in UTM 31N metres
+# Output: hmm_fit.rds, hmm_states.csv, hmm_pimin_sweep.csv (plots come from plot_state_sweep.R)
 #
 # States are ranked by mean step length:
 #   state 1 = near-stationary / drifting, state 2 = fishing (the middle state),
 #   state 3 = transit (fastest).
-# Fishing is labelled at a posterior threshold Pi_min, swept from 0.5 to 1.0.
+# Fishing is labelled at a posterior threshold Pi_min, swept from 0.5 to 0.9 (1.0 is only hit by underflow).
 
 suppressPackageStartupMessages({
   library(momentuHMM)
@@ -21,10 +21,9 @@ input_csv    <- file.path(project_root, "pipeline_outputs/gps_tracks/regularised
 fit_rds      <- file.path(project_root, "pipeline_outputs/hmm_results/hmm_fit.rds")
 states_csv   <- file.path(project_root, "pipeline_outputs/hmm_results/hmm_states.csv")
 sweep_csv    <- file.path(project_root, "pipeline_outputs/hmm_results/hmm_pimin_sweep.csv")
-sweep_png    <- file.path(project_root, "result_figures/hmm_pimin_sweep.png")
 
 MIN_STEPS    <- 20                          # segments need at least this many steps
-PIMIN_VALUES <- seq(0.5, 1.0, by = 0.1)
+PIMIN_VALUES <- seq(0.5, 0.9, by = 0.1)
 STEP_MINUTES <- 5
 ZERO_STEP_KM <- 0.001                       # 1 m, replaces exact zero steps
 N_STARTS     <- 10                          # random starting values; best valid fit is kept
@@ -127,8 +126,10 @@ saveRDS(mod, fit_rds)
 cat("Saved", fit_rds, "\n")
 cat("Optimiser code:", mod$mod$code, "(1 or 2 means converged)\n")
 cat("Log-likelihood:", -mod$mod$minimum, "\n")
-
- 
+pars <- getPar(mod)                               # fitted values on the natural scale
+print(pars)
+cat("Transition matrix:\n")
+print(round(mod$mle$gamma, 4))
 
 # ─────────────────────────────────────────────
 #  DECODE AND LABEL STATES
@@ -147,14 +148,21 @@ kappa <- as.numeric(pars$Par$angle)               # von Mises concentrations
 cat(sprintf("State mean step (km): %s\n", paste(round(state_mean, 3), collapse = ", ")))
 cat(sprintf("State turning concentration: %s\n", paste(round(kappa, 3), collapse = ", ")))
 
-# The fishing state should be the most tortuous (lowest turning concentration) among the two
-# non-transit states, or at least less directed than transit. If not, stop and report.
+# The fishing state should be the most tortuous (lowest turning concentration) of the three:
+# less directed than transit and than the slow state. If not, stop and report.
 transit_state <- order(state_mean)[3]
+slow_state    <- order(state_mean)[1]
 if (kappa[fishing_state] >= kappa[transit_state]) {
   stop(sprintf(paste(
     "Middle state (mean step %.3f km) is not less directed than transit (kappa %.3f vs %.3f).",
     "Check the state labels before using this fishing definition."),
     state_mean[fishing_state], kappa[fishing_state], kappa[transit_state]))
+}
+if (kappa[fishing_state] >= kappa[slow_state]) {
+  stop(sprintf(paste(
+    "Middle state (mean step %.3f km) is not less directed than the slow state (kappa %.3f vs %.3f).",
+    "Fishing and near-stationary may be swapped; check the labels."),
+    state_mean[fishing_state], kappa[fishing_state], kappa[slow_state]))
 }
 
 states_out <- data.frame(

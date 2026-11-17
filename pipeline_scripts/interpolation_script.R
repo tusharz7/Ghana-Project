@@ -23,11 +23,13 @@ TIME_STEP        <- "5 min"  # regular step for predictions
 MIN_POINTS       <- 10       # segments with fewer pings cannot be fitted reliably
 STATIONARY_SD_M  <- 10       # segments whose x and y spread is below this (metres) are skipped
 MAX_RETRY_PASSES <- 3        # extra passes over segments that failed to fit
+SEED             <- 42       # crwMLE retries from random starting values; fixed so reruns match
 
 # ─────────────────────────────────────────────
 #  LOAD AND PREPARE
 # ─────────────────────────────────────────────
 
+set.seed(SEED)
 tracks <- read.csv(input_csv, stringsAsFactors = FALSE)
 tracks$timestamp <- as.POSIXct(tracks$timestamp, tz = "UTC")
 tracks$ID <- tracks$track_id

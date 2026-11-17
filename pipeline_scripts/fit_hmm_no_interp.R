@@ -25,7 +25,7 @@ states_csv   <- file.path(project_root, "pipeline_outputs/hmm_results/hmm_states
 sweep_csv    <- file.path(project_root, "pipeline_outputs/hmm_results/hmm_pimin_sweep_no_interp.csv")
 
 MIN_STEPS    <- 20                          # segments need at least this many steps
-PIMIN_VALUES <- seq(0.5, 1.0, by = 0.1)
+PIMIN_VALUES <- seq(0.5, 0.9, by = 0.1)
 STEP_MINUTES <- 5
 ZERO_STEP_KM <- 0.001                       # 1 m, replaces exact zero steps
 N_STARTS     <- 3                           # all 10 starts agreed in fit_hmm.R, so 3 is enough
@@ -57,7 +57,7 @@ grid_size  <- tapply(regular$slot, regular$ID, max)
 raw <- read.csv(raw_csv, stringsAsFactors = FALSE)[, c("track_id", "timestamp", "x", "y")]
 raw$timestamp <- as.POSIXct(raw$timestamp, tz = "UTC")
 raw <- raw[raw$track_id %in% keep, ]
-raw <- raw[!duplicated(raw[, c("track_id", "timestamp")]), ]   # as in crawl_tracks.R
+raw <- raw[!duplicated(raw[, c("track_id", "timestamp")]), ]   # as in interpolation_script.R
 
 # Nearest slot for each ping; if two pings share a slot, keep the one closest to the slot time
 offset_min <- (as.numeric(raw$timestamp) - grid_start[raw$track_id]) / 60
