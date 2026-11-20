@@ -5,6 +5,10 @@ a trip is a run of pings outside the 1 km Tema-port radius, split again wherever
 more than MAX_TRIP_GAP_DAYS apart. Each trip gets its own track_id so that separate trips
 are never joined into one continuous track.
 The original boat ID is kept in its own column.
+
+Only trips that both start by leaving Tema and end back in Tema are kept (trip_tracks.csv). The rest
+(boats based elsewhere, pieces after a long gap, trips cut off by a gap or the end of the data) go to
+dropped_non_tema_trips.csv. Trip numbers are kept from the full split, so kept trips can skip numbers.
 """
 
 from __future__ import annotations
@@ -22,6 +26,7 @@ from pyproj import Geod, Transformer
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 FISHER_DEPTH_FOLDER = PROJECT_ROOT / "fisherDepth"
 OUTPUT_CSV = PROJECT_ROOT / "pipeline_outputs" / "gps_tracks" / "trip_tracks.csv"
+DROPPED_CSV = PROJECT_ROOT / "pipeline_outputs" / "gps_tracks" / "dropped_non_tema_trips.csv"
 
 TEMA_PORT_LAT = 5 + 38 / 60 + 14.6 / 3600
 TEMA_PORT_LON = 0 + 0 / 60 + 58.5 / 3600
@@ -98,7 +103,8 @@ def split_at_long_gaps(
 #  BUILD TRACKS
 # ─────────────────────────────────────────────
 
-def build_tracks() -> pd.DataFrame:
+def build_tracks() -> tuple[pd.DataFrame, pd.DataFrame]:
+    """Return (Tema-to-Tema trips, all other trips)."""
     pieces, n_spikes = [], 0
     for path in sorted(FISHER_DEPTH_FOLDER.glob("*_depth.csv")):
         points = pd.read_csv(path, parse_dates=["timestamp"]).dropna(
@@ -124,6 +130,7 @@ def build_tracks() -> pd.DataFrame:
             trip["track_id"] = f"{boat_id}_t{number}_s" + trip["segment"].astype(str)
             trip["returned_to_tema"] = returned
             trip["trip_end_reason"] = end_reason   # port, gap (> MAX_TRIP_GAP_DAYS) or end_of_data
+            trip["started_from_tema"] = bool(start > 0 and in_port[start - 1])   # ping before the trip is in port
             pieces.append(trip)
 
     tracks = pd.concat(pieces, ignore_index=True)
@@ -131,11 +138,13 @@ def build_tracks() -> pd.DataFrame:
     tracks["x"] = x
     tracks["y"] = y
     tracks = tracks[[
-        "track_id", "boat_id", "trip_index", "segment", "returned_to_tema",
+        "track_id", "boat_id", "trip_index", "segment", "started_from_tema", "returned_to_tema",
         "trip_end_reason", "timestamp", "lat", "lon", "x", "y", "speed", "depth_m", "on_land",
     ]].copy()
-    tracks.attrs["spikes_dropped"] = n_spikes
-    return tracks
+    tema_trip = tracks["started_from_tema"] & tracks["returned_to_tema"]
+    kept, dropped = tracks[tema_trip].reset_index(drop=True), tracks[~tema_trip].reset_index(drop=True)
+    kept.attrs["spikes_dropped"] = n_spikes
+    return kept, dropped
 
 
 def step_speeds_kmh(lat: np.ndarray, lon: np.ndarray, times: np.ndarray) -> np.ndarray:
@@ -208,10 +217,10 @@ def drop_speed_spikes(points: pd.DataFrame) -> pd.DataFrame:
 
 
 def main() -> None:
-    tracks = build_tracks()
+    tracks, dropped = build_tracks()
     tracks.to_csv(OUTPUT_CSV, index=False)
+    dropped.to_csv(DROPPED_CSV, index=False)
     n_tracks = tracks["track_id"].nunique()
-    n_open = tracks.drop_duplicates("track_id")["returned_to_tema"].eq(False).sum()
     print(f"Saved {OUTPUT_CSV}")
     print(f"Rows: {len(tracks):,}   tracks (trip segments): {n_tracks}   boats: {tracks['boat_id'].nunique()}")
     print(f"GPS spike pings dropped (> {MAX_SPEED_KMH} km/h out and back): {tracks.attrs['spikes_dropped']}")
@@ -219,10 +228,17 @@ def main() -> None:
             for _, t in tracks.groupby("track_id") if len(t) > 1]
     print(f"Steps inside segments still faster than {MAX_SPEED_KMH} km/h (kept, not spikes): "
           f"{int(sum(f.sum() for f in fast))}")
-    print(f"Tracks not returned to Tema (kept, flagged): {n_open}")
     trips = tracks.drop_duplicates(["boat_id", "trip_index"])
-    print(f"Trips: {len(trips)}   ended by a gap over {MAX_TRIP_GAP_DAYS} days: "
-          f"{int((trips['trip_end_reason'] == 'gap').sum())}")
+    gone = dropped.drop_duplicates(["boat_id", "trip_index"])
+    total = len(tracks) + len(dropped)
+    print(f"Tema-to-Tema trips kept: {len(trips)} of {len(trips) + len(gone)}; "
+          f"pings dropped: {len(dropped):,} of {total:,} ({len(dropped) / total:.1%}) -> {DROPPED_CSV.name}")
+    why = np.select([~gone.started_from_tema & ~gone.returned_to_tema, ~gone.started_from_tema], ["neither", "did not start in Tema"],
+                    "did not end in Tema")
+    print("Dropped trips by reason:", pd.Series(why).value_counts().to_dict())
+    lost = (dropped.groupby("boat_id").size() / (dropped.groupby("boat_id").size()
+            .add(tracks.groupby("boat_id").size(), fill_value=0)) * 100).round(1).sort_values(ascending=False)
+    print("Share of each boat's pings dropped (%):", lost[lost > 0].to_dict())
 
 
 if __name__ == "__main__":

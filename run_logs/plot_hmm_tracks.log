@@ -1,5 +1,5 @@
 State numbers by role: {'Near-stationary': 2, 'Fishing': 1, 'Transit': 3}
-Trips with >= 40 steps: 135; sampling 5 (seed 42)
+Trips with >= 40 steps: 98; sampling 5 (seed 42)
 Saved 5 maps to /Users/tushy/Documents/Research/Ghana Project/result_figures/hmm_tracks/n_1
 Saved 5 maps to /Users/tushy/Documents/Research/Ghana Project/result_figures/hmm_tracks/n_2
 Saved 5 maps to /Users/tushy/Documents/Research/Ghana Project/result_figures/hmm_tracks/n_3

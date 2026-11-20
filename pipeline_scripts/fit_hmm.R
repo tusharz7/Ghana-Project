@@ -26,7 +26,7 @@ MIN_STEPS    <- 20                          # segments need at least this many s
 PIMIN_VALUES <- seq(0.5, 0.9, by = 0.1)
 STEP_MINUTES <- 5
 ZERO_STEP_KM <- 0.001                       # 1 m, replaces exact zero steps
-N_STARTS     <- 10                          # random starting values; best valid fit is kept
+N_STARTS     <- 7                           # random starting values; best valid fit is kept
 
 # ─────────────────────────────────────────────
 #  LOAD AND PREPARE

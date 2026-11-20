@@ -1,10 +1,10 @@
 Warning message:
 package 'momentuHMM' was built under R version 4.4.3 
-Segments kept: 1277 of 1590 (>= 20 steps)
-Grid slots: 133428, with a raw ping: 111364 (83.5%), raw pings: 111681 (317 shared a slot and were dropped)
-Replaced 1291 zero-length steps with 0.001 km
-Steps: 98498, segments: 1277
-Base step quantiles (km per 5 min): 0.087 0.24 0.86 
+Segments kept: 764 of 945 (>= 20 steps)
+Grid slots: 86021, with a raw ping: 72341 (84.1%), raw pings: 72558 (217 shared a slot and were dropped)
+Replaced 893 zero-length steps with 0.001 km
+Steps: 64318, segments: 764
+Base step quantiles (km per 5 min): 0.09 0.25 0.865 
 Start 1 of 3
 =======================================================================
 Fitting HMM with 3 states and 2 data streams
@@ -18,7 +18,7 @@ Fitting HMM with 3 states and 2 data streams
  Initial distribution formula: ~1
 =======================================================================
 DONE
-  log-likelihood 66592.4, valid: TRUE
+  log-likelihood 38849.7, valid: TRUE
 Start 2 of 3
 =======================================================================
 Fitting HMM with 3 states and 2 data streams
@@ -32,7 +32,7 @@ Fitting HMM with 3 states and 2 data streams
  Initial distribution formula: ~1
 =======================================================================
 DONE
-  log-likelihood 66592.4, valid: TRUE
+  log-likelihood 38849.7, valid: TRUE
 Start 3 of 3
 =======================================================================
 Fitting HMM with 3 states and 2 data streams
@@ -46,40 +46,40 @@ Fitting HMM with 3 states and 2 data streams
  Initial distribution formula: ~1
 =======================================================================
 DONE
-  log-likelihood 66592.4, valid: TRUE
-Valid fits: 3 of 3; best log-likelihood 66592.4
+  log-likelihood 38849.7, valid: TRUE
+Valid fits: 3 of 3; best log-likelihood 38849.7
 Saved /Users/tushy/Documents/Research/Ghana Project/pipeline_outputs/hmm_results/hmm_fit_no_interp.rds 
 Optimiser code: 1 (1 or 2 means converged)
-Log-likelihood: 66592.4 
+Log-likelihood: 38849.67 
 $Par
 $Par$step
-[1] 0.1888707 0.1567824 0.7750423 0.2215608 0.0822472 0.1507665
+[1] 0.18840563 0.16590028 0.78077324 0.21678866 0.08989783 0.14979283
 
 $Par$angle
-[1]   1.478675  90.591315 100.097642
+[1]  1.483035 85.377785 99.529446
 
 
 $beta
           [,1]      [,2]      [,3]      [,4]     [,5]      [,6]
-[1,] -2.693475 -3.434804 -2.720606 -21.55374 -3.53383 -22.05632
+[1,] -2.652843 -3.513314 -2.566889 -20.70629 -3.57381 -23.02609
 
 $delta
-[1] 0.3017377 0.3163622 0.3819002
+[1] 0.2887781 0.3254112 0.3858107
 
 Transition matrix:
         state 1 state 2 state 3
-state 1  0.9092  0.0615  0.0293
-state 2  0.0618  0.9382  0.0000
-state 3  0.0284  0.0000  0.9716
-State mean step (km): 0.189, 0.157, 0.775
-State turning concentration: 1.479, 90.591, 100.098
+state 1  0.9089  0.0640  0.0271
+state 2  0.0713  0.9287  0.0000
+state 3  0.0273  0.0000  0.9727
+State mean step (km): 0.188, 0.166, 0.781
+State turning concentration: 1.483, 85.378, 99.529
 Saved /Users/tushy/Documents/Research/Ghana Project/pipeline_outputs/hmm_results/hmm_states_no_interp.csv 
   pi_min fishing_points fishing_share fishing_hours fishing_runs
-1    0.5          43032     0.3225110      3586.000         3656
-2    0.6          40692     0.3049735      3391.000         3693
-3    0.7          38030     0.2850226      3169.167         3780
-4    0.8          35323     0.2647345      2943.583         3915
-5    0.9          31755     0.2379935      2646.250         4216
+1    0.5          29200     0.3394520      2433.333         2442
+2    0.6          27595     0.3207938      2299.583         2486
+3    0.7          25871     0.3007521      2155.917         2539
+4    0.8          24053     0.2796178      2004.417         2645
+5    0.9          21574     0.2507992      1797.833         2868
 Saved /Users/tushy/Documents/Research/Ghana Project/pipeline_outputs/hmm_results/hmm_pimin_sweep_no_interp.csv 
 Saved /Users/tushy/Documents/Research/Ghana Project/result_figures/hmm_pimin_sweep.png 
 Saved /Users/tushy/Documents/Research/Ghana Project/result_figures/hmm_pimin_sweep_interp.png 

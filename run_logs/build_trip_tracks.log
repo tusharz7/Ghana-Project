@@ -1,6 +1,7 @@
 Saved /Users/tushy/Documents/Research/Ghana Project/pipeline_outputs/gps_tracks/trip_tracks.csv
-Rows: 122,618   tracks (trip segments): 2942   boats: 25
+Rows: 78,153   tracks (trip segments): 1702   boats: 22
 GPS spike pings dropped (> 30 km/h out and back): 100
-Steps inside segments still faster than 30 km/h (kept, not spikes): 52
-Tracks not returned to Tema (kept, flagged): 1166
-Trips: 228   ended by a gap over 4 days: 31
+Steps inside segments still faster than 30 km/h (kept, not spikes): 21
+Tema-to-Tema trips kept: 150 of 228; pings dropped: 44,465 of 122,618 (36.3%) -> dropped_non_tema_trips.csv
+Dropped trips by reason: {'did not end in Tema': 35, 'did not start in Tema': 27, 'neither': 16}
+Share of each boat's pings dropped (%): {'OMI_Fisher_022_EnsoNyameYe2': 100.0, 'OMI_Fisher_019_Emmanuel': 100.0, 'OMI_Fisher_016_GreatProvider': 100.0, 'OMI_Fisher_014_RoyalDiadem': 99.9, 'OMI_Fisher_017_GoodFather': 97.6, 'OMI_Fisher_024_OnsoNyameYe': 62.2, 'OMI_Fisher_007_Powerful': 49.3, 'OMI_Fisher_003_WaLoBi': 44.8, 'OMI_Fisher_026_ObonuFM': 39.3, 'OMI_Fisher_028_MawuBeDziBe1': 28.9, 'OMI_Fisher_008_Malachie3': 26.2, 'OMI_Fisher_010_MawuBeJiBe2': 24.8, 'OMI_Fisher_012_IfMenWereGod': 22.5, 'OMI_Fisher_025_MawuBeDziBe2': 21.0, 'OMI_Fisher_006_NothingLate': 20.0, 'OMI_Fisher_021_Otsokobila': 13.7, 'OMI_Fisher_004_FaithIsPower': 8.7, 'OMI_Fisher_009_SeeGod1': 8.6, 'OMI_Fisher_027_2_IfMenWereGod': 8.5, 'OMI_Fisher_013_John316': 2.4, 'OMI_Fisher_005_MawuBeJiBe1': 0.3, 'OMI_Fisher_011_Africa2': 0.1, 'OMI_Fisher_001_MessiahTanker3': 0.1}

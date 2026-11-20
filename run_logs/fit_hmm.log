@@ -1,10 +1,10 @@
 Warning message:
 package 'momentuHMM' was built under R version 4.4.3 
-Segments kept: 1277 of 1590 (>= 20 steps)
-Replaced 62 zero-length steps with 0.001 km
-Steps: 132151, segments: 1277
-Base step quantiles (km per 5 min): 0.088 0.237 0.856 
-Start 1 of 10
+Segments kept: 764 of 945 (>= 20 steps)
+Replaced 48 zero-length steps with 0.001 km
+Steps: 85257, segments: 764
+Base step quantiles (km per 5 min): 0.09 0.246 0.863 
+Start 1 of 7
 =======================================================================
 Fitting HMM with 3 states and 2 data streams
 -----------------------------------------------------------------------
@@ -17,8 +17,8 @@ Fitting HMM with 3 states and 2 data streams
  Initial distribution formula: ~1
 =======================================================================
 DONE
-  log-likelihood 106291.6, valid: TRUE
-Start 2 of 10
+  log-likelihood 61652.7, valid: TRUE
+Start 2 of 7
 =======================================================================
 Fitting HMM with 3 states and 2 data streams
 -----------------------------------------------------------------------
@@ -31,8 +31,8 @@ Fitting HMM with 3 states and 2 data streams
  Initial distribution formula: ~1
 =======================================================================
 DONE
-  log-likelihood 106291.6, valid: TRUE
-Start 3 of 10
+  log-likelihood 61652.7, valid: TRUE
+Start 3 of 7
 =======================================================================
 Fitting HMM with 3 states and 2 data streams
 -----------------------------------------------------------------------
@@ -45,8 +45,8 @@ Fitting HMM with 3 states and 2 data streams
  Initial distribution formula: ~1
 =======================================================================
 DONE
-  log-likelihood 106291.6, valid: TRUE
-Start 4 of 10
+  log-likelihood 61652.7, valid: TRUE
+Start 4 of 7
 =======================================================================
 Fitting HMM with 3 states and 2 data streams
 -----------------------------------------------------------------------
@@ -59,8 +59,8 @@ Fitting HMM with 3 states and 2 data streams
  Initial distribution formula: ~1
 =======================================================================
 DONE
-  log-likelihood 106291.6, valid: TRUE
-Start 5 of 10
+  log-likelihood 61652.7, valid: TRUE
+Start 5 of 7
 =======================================================================
 Fitting HMM with 3 states and 2 data streams
 -----------------------------------------------------------------------
@@ -73,8 +73,8 @@ Fitting HMM with 3 states and 2 data streams
  Initial distribution formula: ~1
 =======================================================================
 DONE
-  log-likelihood 106291.6, valid: TRUE
-Start 6 of 10
+  log-likelihood 61652.7, valid: TRUE
+Start 6 of 7
 =======================================================================
 Fitting HMM with 3 states and 2 data streams
 -----------------------------------------------------------------------
@@ -87,8 +87,8 @@ Fitting HMM with 3 states and 2 data streams
  Initial distribution formula: ~1
 =======================================================================
 DONE
-  log-likelihood 106291.6, valid: TRUE
-Start 7 of 10
+  log-likelihood 61652.7, valid: TRUE
+Start 7 of 7
 =======================================================================
 Fitting HMM with 3 states and 2 data streams
 -----------------------------------------------------------------------
@@ -101,82 +101,40 @@ Fitting HMM with 3 states and 2 data streams
  Initial distribution formula: ~1
 =======================================================================
 DONE
-  log-likelihood 106291.6, valid: TRUE
-Start 8 of 10
-=======================================================================
-Fitting HMM with 3 states and 2 data streams
------------------------------------------------------------------------
-
- step ~ gamma(mean=~1, sd=~1)
- angle ~ vm(concentration=~1)
-
- Transition probability matrix formula: ~1
-
- Initial distribution formula: ~1
-=======================================================================
-DONE
-  log-likelihood 106291.6, valid: TRUE
-Start 9 of 10
-=======================================================================
-Fitting HMM with 3 states and 2 data streams
------------------------------------------------------------------------
-
- step ~ gamma(mean=~1, sd=~1)
- angle ~ vm(concentration=~1)
-
- Transition probability matrix formula: ~1
-
- Initial distribution formula: ~1
-=======================================================================
-DONE
-  log-likelihood 106291.6, valid: TRUE
-Start 10 of 10
-=======================================================================
-Fitting HMM with 3 states and 2 data streams
------------------------------------------------------------------------
-
- step ~ gamma(mean=~1, sd=~1)
- angle ~ vm(concentration=~1)
-
- Transition probability matrix formula: ~1
-
- Initial distribution formula: ~1
-=======================================================================
-DONE
-  log-likelihood 106291.6, valid: TRUE
-Valid fits: 10 of 10; best log-likelihood 106291.6
+  log-likelihood 61652.7, valid: TRUE
+Valid fits: 7 of 7; best log-likelihood 61652.7
 Saved /Users/tushy/Documents/Research/Ghana Project/pipeline_outputs/hmm_results/hmm_fit.rds 
 Optimiser code: 1 (1 or 2 means converged)
-Log-likelihood: 106291.6 
+Log-likelihood: 61652.69 
 $Par
 $Par$step
-[1] 0.1894548 0.1584698 0.7709900 0.2322598 0.0868272 0.1489932
+[1] 0.18992051 0.16479878 0.77949266 0.22932751 0.09347368 0.14971417
 
 $Par$angle
-[1]   1.501287 111.010109 127.187175
+[1]   1.499826 104.007285 126.772499
 
 
 $beta
-          [,1]      [,2]      [,3]      [,4]      [,5]      [,6]
-[1,] -2.358528 -3.225927 -2.539378 -23.27007 -3.427863 -23.30838
+          [,1]      [,2]     [,3]      [,4]      [,5]      [,6]
+[1,] -2.329454 -3.298833 -2.41379 -22.37863 -3.455081 -24.49745
 
 $delta
-[1] 0.2735825 0.3550594 0.3713580
+[1] 0.2518521 0.3665521 0.3815958
 
 Transition matrix:
         state 1 state 2 state 3
-state 1  0.8816  0.0834  0.0350
-state 2  0.0731  0.9269  0.0000
-state 3  0.0314  0.0000  0.9686
-State mean step (km): 0.189, 0.158, 0.771
-State turning concentration: 1.501, 111.01, 127.187
+state 1  0.8816  0.0858  0.0326
+state 2  0.0821  0.9179  0.0000
+state 3  0.0306  0.0000  0.9694
+State mean step (km): 0.19, 0.165, 0.779
+State turning concentration: 1.5, 104.007, 126.772
 Saved /Users/tushy/Documents/Research/Ghana Project/pipeline_outputs/hmm_results/hmm_states.csv 
   pi_min fishing_points fishing_share fishing_hours fishing_runs
-1    0.5          39913     0.2991351      3326.083         4720
-2    0.6          38812     0.2908835      3234.333         4813
-3    0.7          37602     0.2818149      3133.500         4943
-4    0.8          36257     0.2717346      3021.417         5144
-5    0.9          33554     0.2514765      2796.167         5942
+1    0.5          26940     0.3131793      2245.000         3126
+2    0.6          26190     0.3044605      2182.500         3212
+3    0.7          25409     0.2953814      2117.417         3315
+4    0.8          24467     0.2844305      2038.917         3463
+5    0.9          22573     0.2624127      1881.083         4144
 Saved /Users/tushy/Documents/Research/Ghana Project/pipeline_outputs/hmm_results/hmm_pimin_sweep.csv 
 Saved /Users/tushy/Documents/Research/Ghana Project/result_figures/hmm_pimin_sweep.png 
 Saved /Users/tushy/Documents/Research/Ghana Project/result_figures/hmm_pimin_sweep_interp.png 
