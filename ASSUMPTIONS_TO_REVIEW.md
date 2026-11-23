@@ -1,4 +1,4 @@
-# Assumptions to review: data prep, HMM runs and SST matching
+# Assumptions to review: data prep, HMM runs, SST and chlorophyll matching
 
 Purpose: a checklist for an independent review of this pipeline. Each item states an assumption the code makes,
 where it lives, and what could go wrong. Please verify each one against the code and data, and report anything
@@ -8,6 +8,10 @@ Run R scripts from the project folder (`Rscript pipeline_scripts/<name>.R`); Pyt
 their own location. Use `/usr/bin/python3` (the project `.venv` lacks pandas).
 
 All counts are from the 19 Nov 2026 run (Tema-to-Tema trips only, main fit with 7 starts) unless marked otherwise.
+
+**Changes on 22 Nov 2026:** SST gaps filled from RSS MW_IR (5.8–5.12); daily SST GIFs with and without the MW_IR
+fill (section 6); PACE chlorophyll matched to pings (section 7); side-by-side n comparison plots (4.5); large data
+folders moved to the external SSD (see "Data location"). No HMM steps were rerun.
 
 **Changes on 19 Nov 2026:** only trips that start and end in Tema are kept (1.11); the main fit uses 7 starts
 instead of 10 (3.8); Meteosat-12 SST is matched to every ping (section 5). The pipeline was rerun from step 1.
@@ -27,8 +31,18 @@ instead of 10 (3.8); Meteosat-12 SST is matched to every ping (section 5). The p
 | 3 | `pipeline_scripts/fit_hmm.R` (main), `fit_hmm_step_only.R`, `fit_hmm_angle_only.R`, `fit_hmm_no_interp.R` | `pipeline_outputs/hmm_results/hmm_fit*.rds`, `hmm_states*.csv`, sweep CSVs |
 | 4 | `fishing_events.R`, `plot_state_sweep.R`, `plot_fishing_min_length.py`, `plot_hmm_tracks.py` | event tables, `result_figures/` |
 | 5 (independent of 2-4) | `pipeline_scripts/match_sst_meteosat12.py` | `data/sst_meteosat12/*.nc` (hourly crops), `pipeline_outputs/environment/ping_sst_meteosat12.csv` |
+| 5b (after 5) | `pipeline_scripts/match_sst_mwir.py` | `data/sst_mwir/*.nc` (daily crops), `pipeline_outputs/environment/ping_sst_combined.csv` |
+| 5c (after 5; 5b for the fill version) | `plot_sst_gifs.py`, `plot_sst_gifs_mwir.py` | `result_figures/sst_gifs/`, `result_figures/sst_gifs_mwir_fill/` |
+| 6 (independent of 2-5) | `pipeline_scripts/match_chl_pace.py` | `data/chl_pace/*.nc` (crops), `pipeline_outputs/environment/ping_chl_pace.csv` |
+| 4b (after 4) | `pipeline_scripts/plot_compare_n.py` | `result_figures/hmm_tracks/compare_n/` |
 
 Data files (CSV, RDS, XLSX, NetCDF) are git-ignored and exist only locally.
+
+**Data location.** `data/sst_meteosat12`, `data/sst_mwir`, `data/chl_pace` and the grid files `data/Depth.data`,
+`XC.data`, `YC.data`, `RC.data` are symlinks to `/Volumes/Extreme SSD/Ghana Project data/` (moved 22 Nov 2026 so
+iCloud stops offloading them). Steps 0b, 5, 5b, 5c and 6 need the SSD mounted. The SSD is ExFAT, so macOS may
+write hidden `._*` files there; `plot_sst_gifs.py` and `generate_fisher_metadata.py` skip them. The SST, MW_IR and
+PACE matches were rerun through the symlinks and gave identical results.
 
 ---
 
@@ -146,6 +160,8 @@ The sweep panels therefore compare different state definitions across models.
 
 4.4 **`plot_state_sweep.R` finds each model's `.rds` from its states-file name by regex.** Shares are over all positions, including empty slots in the no-interpolation model.
 
+4.5 **`plot_compare_n.py` stitches the existing `plot_hmm_tracks.py` PNGs for n = 1-6 side by side**, one image per trip, labelled "n = k". It does not re-plot: each panel keeps its own legend and map extent, so panels are not on a shared axis. Rerun it after `plot_hmm_tracks.py`.
+
 ## 5. Sea surface temperature (`pipeline_scripts/match_sst_meteosat12.py`)
 
 5.1 **Source: OSI SAF OSI-206-b, Meteosat-12 (MTG-I1) FCI L3C sub-skin SST**, hourly, 0.05° grid (EUMETSAT Data Store collection `EO:EUM:DAT:0694`). The product is listed as pre-operational. It is **sub-skin** SST (about 1 mm depth), not bulk or depth-resolved temperature. MTG-S1 / Meteosat-13 has no SST product for these dates.
@@ -162,11 +178,47 @@ The sweep panels therefore compare different state definitions across models.
 
 5.7 **Good-quality SST** (bias-corrected): mean 28.6 °C, range 24.9–32.4 °C, interquartile 27.8–29.5 °C.
 
-## 6. Cross-cutting checks still to do
+### MW_IR gap fill (`pipeline_scripts/match_sst_mwir.py`)
+
+5.8 **Source: Remote Sensing Systems MW_IR OI SST v05.1**, daily L4 GHRSST foundation SST on a 9 km grid (microwave + infrared, optimally interpolated, gap-free over open sea). Open access at `data.remss.com`, no login. It is a **foundation** SST (below the daytime warm layer), unlike Meteosat-12's hourly **sub-skin** SST, so the two are not identical (5.11).
+
+5.9 **Which pings are filled:** those with no Meteosat-12 SST or `quality_level` < 3 (`MIN_QUALITY = 3`, different from the low_quality cut of 4 in 5.4). Pings with quality 3–5 keep their Meteosat value. MW_IR was downloaded only for the 151 days with such pings and cropped to the same box (`data/sst_mwir/`).
+
+5.10 **Matching: nearest 9 km cell for the ping's UTC day.** No interpolation. Cells MW_IR treats as land (within about 9 km of the coast) give no value, and those pings stay missing; no nearest-sea-cell fill. Output columns: `sst_mwir_c`, `mwir_error_c`, `sst_best_c` (Meteosat if kept, else MW_IR) and `sst_source` (`meteosat12`, `mw_ir` or empty). The regular MW-only product (25 km) was tested on the 5 worst days and filled none of the remaining coastal pings.
+
+5.11 **Agreement.** Where both have a value for the same pixel and day (in the GIF comparison, section 6), MW_IR minus Meteosat is −0.11 to −0.19 °C on average (sd 0.42–0.47 °C), depending on the quality cut. Mixing the sources in one column (`sst_best_c`) therefore adds a small cool bias where MW_IR is used; `sst_source` lets analyses separate them.
+
+5.12 **Coverage with the fill (Meteosat q3–5, else MW_IR):** Meteosat 45.4% of pings, MW_IR 49.1% (42.4% where Meteosat had no value, 6.8% where it was quality 2), still missing 5.5% (4,275, mostly near shore around Tema). Missing by month: Oct 2.1%, Nov 1.7%, Dec 7.2%, Jan 11.3%, Feb 5.1%, Apr 5.1%, May 2.5%. MW_IR carries 64–67% of pings in April–May.
+
+## 6. SST GIFs (`plot_sst_gifs.py`, `plot_sst_gifs_mwir.py`)
+
+6.1 **One GIF per minimum quality: 5 only, 4+, 3+, 2+.** No "1+" GIF: quality 0 and 1 never occur in the crops, so it would duplicate 2+.
+
+6.2 **Each frame is one UTC day.** Each 0.05° pixel shows the mean bias-corrected SST (`sea_surface_temperature − sses_bias`) over that day's hourly files where the pixel has a value that passes the quality cut. Only hours with pings were downloaded (5.2), so the number of hours averaged differs between days (1–24, shown in the title) and between pixels within a frame, and days with no pings (all of March 2026) are absent: 154 frames, 7 Oct 2025 to 27 May 2026. Grey = no passing value that day (mostly cloud). The daily mean smooths the diurnal cycle unevenly, because the hours included differ by day.
+
+6.3 **Display:** fixed colour scale 24–31 °C (`turbo`) in every frame and GIF (0.2% of values fall outside), 10 frames per second, Natural Earth 10 m coastline, Tema marked with a star. Frames share one 255-colour palette, so colours are slightly quantised.
+
+6.4 **MW_IR fill version** (`result_figures/sst_gifs_mwir_fill/`, `*_mwir.gif`): each GIF fills its own grey pixels (no Meteosat value passing that GIF's cut) with MW_IR from the nearest 9 km cell, drawn in the same colours but faded (alpha 0.55) with a dot pattern. Coastal pixels MW_IR does not cover stay grey. 4 of the 154 days have no MW_IR file (MW_IR was only fetched for days with pings needing a fill, 5.9) and show Meteosat only; these were deliberately not downloaded. The run prints the MW_IR − Meteosat difference used in 5.11.
+
+6.5 **Runtime:** reading the 3,186 hourly files takes 10–30 minutes; both scripts read every file again (no cache).
+
+## 7. Chlorophyll-a (`pipeline_scripts/match_chl_pace.py`)
+
+7.1 **Source: NASA PACE OCI Level-3 mapped biogeochemical properties v3.2 (`PACE_OCI_L3M_BGC`), 4 km, `chlor_a` (mg m⁻³).** Needs a NASA Earthdata login in `~/.netrc`. This is intended to replace the Sentinel-3 OLCI daily L3m chlorophyll used in `exploratory_analysis/fisherMetadata/generate_fisher_metadata.py`, which has not been switched yet.
+
+7.2 **Matching:** nearest 4 km cell from the daily file for the ping's UTC day; where that is empty, the 8-day composite containing the day. `chl_source` = `daily`, `8day` or empty. 178 files (daily + 8-day) for the 155 ping days, cropped to the same box (`data/chl_pace/`).
+
+7.3 **Coverage is poor:** daily 6.2% of pings, 8-day 33.5%, missing 60.3%. Missing by month: Oct 21%, Nov 49%, Dec 81%, Jan 97%, Feb 94%, Apr 62%, May 33%. The December–February gap is likely cloud plus Harmattan dust (ocean colour needs clear sky); the original OLCI files are as empty in those months (they filled only 756 of the 47,146 missing pings).
+
+7.4 **Tested but not in the script:** adding PACE monthly composites cuts missing to 24.0%; adding OLCI (S3A and S3B averaged, with 8-day and monthly averages built from the daily files, data only to 11 Feb 2026) cuts it to 15.0% (still 31–38% in January–February). A monthly value is a weak match for a single day. Which fallback to use, or a gap-filled L4 product (Copernicus Marine `OCEANCOLOUR_GLO_BGC_L4_NRT_009_102`), is an open question sent to the mentor.
+
+## 8. Cross-cutting checks still to do
 
 - Pseudo-residuals (`pseudoRes`) on the main fit; 2 vs 3 vs 4 states by AIC/BIC (3.4).
 - Which crawl optimum is right for segments that moved by kilometres between unseeded runs (2.9).
 - Boat identities for 016, 017, 021, 022 and the export behind `fisherDepth/` (0.6).
 - Time zone of the raw exports (0.2), which also affects the SST hour matching.
 - Whether the 21 remaining fast steps are real (1.8).
-- Whether SST gaps (cloud) bias any comparison of SST between HMM states (5.5).
+- Whether SST gaps (cloud) bias any comparison of SST between HMM states (5.5), and whether the MW_IR fill's cool offset matters (5.11).
+- Chlorophyll fallback level (daily / 8-day / monthly / gap-filled product) and how to treat the January–February gap (7.4).
+- Whether to fill the remaining coastal SST pings from the nearest sea cell (5.10).
