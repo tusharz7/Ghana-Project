@@ -10,7 +10,7 @@ their own location. Use `/usr/bin/python3` (the project `.venv` lacks pandas).
 All counts are from the 19 Nov 2026 run (Tema-to-Tema trips only, main fit with 7 starts) unless marked otherwise.
 
 **Changes on 22 Nov 2026:** SST gaps filled from RSS MW_IR (5.8–5.12); daily SST GIFs with and without the MW_IR
-fill (section 6); PACE chlorophyll matched to pings (section 7); side-by-side n comparison plots (4.5); large data
+fill (section 6); PACE chlorophyll matched to pings (section 7); side-by-side n comparison plots (4.5); a daily PACE chlorophyll GIF (7.5); large data
 folders moved to the external SSD (see "Data location"). No HMM steps were rerun.
 
 **Changes on 19 Nov 2026:** only trips that start and end in Tema are kept (1.11); the main fit uses 7 starts
@@ -34,13 +34,14 @@ instead of 10 (3.8); Meteosat-12 SST is matched to every ping (section 5). The p
 | 5b (after 5) | `pipeline_scripts/match_sst_mwir.py` | `data/sst_mwir/*.nc` (daily crops), `pipeline_outputs/environment/ping_sst_combined.csv` |
 | 5c (after 5; 5b for the fill version) | `plot_sst_gifs.py`, `plot_sst_gifs_mwir.py` | `result_figures/sst_gifs/`, `result_figures/sst_gifs_mwir_fill/` |
 | 6 (independent of 2-5) | `pipeline_scripts/match_chl_pace.py` | `data/chl_pace/*.nc` (crops), `pipeline_outputs/environment/ping_chl_pace.csv` |
+| 6b (after 6) | `pipeline_scripts/plot_chl_gifs.py` | `result_figures/chl_gifs/chl_pace_daily.gif` |
 | 4b (after 4) | `pipeline_scripts/plot_compare_n.py` | `result_figures/hmm_tracks/compare_n/` |
 
 Data files (CSV, RDS, XLSX, NetCDF) are git-ignored and exist only locally.
 
 **Data location.** `data/sst_meteosat12`, `data/sst_mwir`, `data/chl_pace` and the grid files `data/Depth.data`,
 `XC.data`, `YC.data`, `RC.data` are symlinks to `/Volumes/Extreme SSD/Ghana Project data/` (moved 22 Nov 2026 so
-iCloud stops offloading them). Steps 0b, 5, 5b, 5c and 6 need the SSD mounted. The SSD is ExFAT, so macOS may
+iCloud stops offloading them). Steps 0b, 5, 5b, 5c, 6 and 6b need the SSD mounted. The SSD is ExFAT, so macOS may
 write hidden `._*` files there; `plot_sst_gifs.py` and `generate_fisher_metadata.py` skip them. The SST, MW_IR and
 PACE matches were rerun through the symlinks and gave identical results.
 
@@ -211,6 +212,8 @@ The sweep panels therefore compare different state definitions across models.
 7.3 **Coverage is poor:** daily 6.2% of pings, 8-day 33.5%, missing 60.3%. Missing by month: Oct 21%, Nov 49%, Dec 81%, Jan 97%, Feb 94%, Apr 62%, May 33%. The December–February gap is likely cloud plus Harmattan dust (ocean colour needs clear sky); the original OLCI files are as empty in those months (they filled only 756 of the 47,146 missing pings).
 
 7.4 **Tested but not in the script:** adding PACE monthly composites cuts missing to 24.0%; adding OLCI (S3A and S3B averaged, with 8-day and monthly averages built from the daily files, data only to 11 Feb 2026) cuts it to 15.0% (still 31–38% in January–February). A monthly value is a weak match for a single day. Which fallback to use, or a gap-filled L4 product (Copernicus Marine `OCEANCOLOUR_GLO_BGC_L4_NRT_009_102`), is an open question sent to the mentor.
+
+7.5 **Chlorophyll GIF (`plot_chl_gifs.py`, `result_figures/chl_gifs/chl_pace_daily.gif`).** One frame per PACE daily file (154 frames, 7 Oct 2025 to 27 May 2026; daily files exist only for ping days, so March 2026 is absent), `chlor_a` as delivered with **no 8-day fill**. Grey = no value that day. Fixed log colour scale 0.05–10 mg m⁻³ (`viridis`; 0.27% of values fall outside and are clipped to the end colours; 1st–99th percentile 0.08–2.8), 10 frames per second, same coastline, Tema star and palette quantisation as the SST GIFs (6.3). Most frames are largely grey (for example 5.8% of the box has a value on 12 Oct 2025), and December–February are nearly empty (7.3).
 
 ## 8. Cross-cutting checks still to do
 
