@@ -132,7 +132,7 @@ def environmental_files(folder: str) -> dict[str, Path]:
     return {
         date: path
         for path in (ENVIRONMENT_FOLDER / folder).glob("*.nc")
-        if (date := date_from_filename(path))
+        if not path.name.startswith("._") and (date := date_from_filename(path))  # skip macOS ._ files
     }
 
 

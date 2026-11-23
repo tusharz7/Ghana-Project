@@ -1,0 +1,11 @@
+  read 500/3186 files
+  read 1000/3186 files
+  read 1500/3186 files
+  read 2000/3186 files
+  read 2500/3186 files
+  read 3000/3186 files
+Days: 154; with an MW_IR file: 150
+Saved /Users/tushy/Documents/Research/Ghana Project/result_figures/sst_gifs_mwir_fill/sst_quality_5_mwir.gif (154 frames, 6.5 MB); MW_IR minus Meteosat where both exist: mean -0.19 C, sd 0.42 C
+Saved /Users/tushy/Documents/Research/Ghana Project/result_figures/sst_gifs_mwir_fill/sst_quality_4plus_mwir.gif (154 frames, 6.4 MB); MW_IR minus Meteosat where both exist: mean -0.16 C, sd 0.43 C
+Saved /Users/tushy/Documents/Research/Ghana Project/result_figures/sst_gifs_mwir_fill/sst_quality_3plus_mwir.gif (154 frames, 6.5 MB); MW_IR minus Meteosat where both exist: mean -0.14 C, sd 0.44 C
+Saved /Users/tushy/Documents/Research/Ghana Project/result_figures/sst_gifs_mwir_fill/sst_quality_2plus_mwir.gif (154 frames, 6.8 MB); MW_IR minus Meteosat where both exist: mean -0.11 C, sd 0.47 C

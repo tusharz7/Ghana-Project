@@ -15,3 +15,8 @@ __pycache__/
 *.out
 Exported Files/
 fisherDepth/
+
+# Big data folders live on the Extreme SSD; data/ holds symlinks to them
+data/sst_meteosat12
+data/sst_mwir
+data/chl_pace

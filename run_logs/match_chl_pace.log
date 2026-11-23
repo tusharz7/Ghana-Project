@@ -1,0 +1,14 @@
+Pings: 78,153 on 155 days; days with a daily file: 154, with an 8-day file: 155
+Files needed: 178; already cropped: 0; to download: 178
+  attempt 1: 25/178 done
+  attempt 1: 50/178 done
+  attempt 1: 75/178 done
+  attempt 1: 100/178 done
+  attempt 1: 125/178 done
+  attempt 1: 150/178 done
+  attempt 1: 175/178 done
+  attempt 1: 178/178 done
+Download done; failed after retries: 0
+Saved /Users/tushy/Documents/Research/Ghana Project/pipeline_outputs/environment/ping_chl_pace.csv
+chl_source counts: {<NA>: 47146, '8day': 26147, 'daily': 4860}
+chlor_a (mg m^-3): {'count': 31007.0, 'mean': 0.288, 'std': 0.49, 'min': 0.095, '25%': 0.133, '50%': 0.184, '75%': 0.256, 'max': 9.15}

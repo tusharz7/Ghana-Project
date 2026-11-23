@@ -1,0 +1,13 @@
+Pings: 78,153; to fill from MW_IR: 42,668 on 151 days
+Days needed: 151; already cropped: 0; to download: 151
+  attempt 1: 25/151 done
+  attempt 1: 50/151 done
+  attempt 1: 75/151 done
+  attempt 1: 100/151 done
+  attempt 1: 125/151 done
+  attempt 1: 150/151 done
+  attempt 1: 151/151 done
+Download done; failed after retries: 0
+Saved /Users/tushy/Documents/Research/Ghana Project/pipeline_outputs/environment/ping_sst_combined.csv
+sst_source counts: {'mw_ir': 38393, 'meteosat12': 35485, <NA>: 4275}
+MW_IR SST filled (deg C): {'count': 38393.0, 'mean': 28.89, 'std': 1.03, 'min': 26.09, '25%': 28.01, '50%': 29.16, '75%': 29.76, 'max': 30.55}
